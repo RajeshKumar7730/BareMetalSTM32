@@ -35,6 +35,6 @@ st-disconnect:
 	@powershell.exe usbipd detach --busid 1-2
 
 run-docker:
-	@docker run -it -v ".:/workspace" -v "C:\Users\rajes\.ssh:/root/.ssh" myimg:v2
+	@docker run -it -v ".:/workspace" -v "C:\Users\rajes\.ssh:/root/.ssh" myimg:v3
 
 #export PATH=$PATH:/workspace/protobuf/nanopb/generator
