@@ -112,7 +112,7 @@ static void recv_rx(my_uart_t *inst)
             REMOVE_HEAD(inst->recv_free_q);
             ctx->next = NULL;
             ADD_TO_TAIL(inst->recv_done_q,ctx);
-            printf("SF\n");
+            // printf("SF\n");
             break;
         }
 
@@ -210,7 +210,7 @@ static void send_tx(my_uart_t *inst)
                 frame.data = ctx->data;
                 ctx->isotp_state = ISOTP_STATE_TX_DONE;
                 ctx->sent_len = ctx->data_len;
-                printf("Sent SF\n");
+                // printf("Sent SF\n");
 
             }
             
@@ -258,7 +258,7 @@ static void send_tx(my_uart_t *inst)
             REMOVE_HEAD(inst->send_active_q);
             ctx->next = NULL;
             ADD_TO_TAIL(inst->send_free_q,ctx);
-            printf("Memory freed\n");
+            // printf("Memory freed\n");
             break;
         }
         default:
@@ -290,7 +290,7 @@ int uart_stack_send_msg(uint8_t *data,uint8_t len)
         REMOVE_HEAD(uart_inst.send_free_q);
         ADD_TO_TAIL(uart_inst.send_active_q,ctx);
         ctx->next = NULL;
-        printf("Added msg\n");
+        // printf("Added msg\n");
         
     }
     else{

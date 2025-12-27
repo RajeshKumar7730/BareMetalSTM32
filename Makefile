@@ -20,8 +20,8 @@ gdb:
 	gdb-multiarch build/bare-metal-stm32.elf \
   			-ex "target remote localhost:3333" \
 			  -ex "load" \
-			  	-ex 'set $$pc = 0x20000320' \
-					-ex "break reset_handler"	\
+			  	-ex 'set $$pc = 0x2000039c' \
+					-ex "break main"	\
 				 		-ex "continue"
 
 debug:
