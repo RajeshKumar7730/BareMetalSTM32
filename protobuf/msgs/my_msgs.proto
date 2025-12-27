@@ -1,0 +1,63 @@
+syntax = "proto3";
+import "nanopb.proto";
+
+message AddRequest {
+  uint32 a = 1;
+  uint32 b = 2;
+}
+
+message AddResponse {
+  uint32 result = 1;
+}
+
+message Empty{
+
+}
+
+message bankinfo {
+    uint32 active = 1;
+    uint32 major = 2;
+    uint32 minor = 3;
+    uint32 version = 4;
+    uint32 hash = 5;
+}
+
+message sw_info{
+    bankinfo bank1  = 1;
+    bankinfo bank2  = 2;
+    bankinfo bank3  = 3;
+    bankinfo bank4  = 4;  
+}
+enum UPD_CMD{
+  CMD_FLASH_ERASE = 0;
+  CMD_FLASH_WRITE = 1;
+  CMD_ABORT_UPGRADE = 2;
+  CMD_FW_UPGRADE_DONE = 3;
+}
+message fw_upgrade{
+  UPD_CMD cmd = 1;
+  repeated uint32 data = 2 [(nanopb).max_count = 8];;
+}
+
+enum LED_STATE{
+  LED_ON = 0;
+  LED_OFF = 1;
+  LED_TOGGLE = 2;
+}
+message led_ctrl_req{
+  LED_STATE operation = 1;
+}
+
+
+message proto_msg {
+  oneof payload{
+    Empty reset_req = 1;
+    AddRequest add_req = 2;
+    AddResponse add_resp = 3;
+    Empty sw_info_req = 4;
+    sw_info sw_info_resp = 5;
+    fw_upgrade upd_req = 6;
+
+    led_ctrl_req led_req = 8; 
+  }
+}
