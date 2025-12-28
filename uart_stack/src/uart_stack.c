@@ -139,7 +139,7 @@ static void recv_rx(my_uart_t *inst)
             // uint8_t data[]={0xFC};
             // fc.data = data;
             // send_isotp_frame(&fc);
-            printf("FF\n");
+            // printf("FF\n");
             break;
         }
 
@@ -149,11 +149,11 @@ static void recv_rx(my_uart_t *inst)
                 // printf("Ctx Rx Len %d\n",ctx->recv_len);
                 mycopy(ctx->data+ctx->recv_len,frame.data,ISOTP_MAX_CF_DATA_LENGTH);
                 ctx->recv_len += ISOTP_MAX_CF_DATA_LENGTH;
-                printf("CF %d\n",frame.seq_num);
+                // printf("CF %d\n",frame.seq_num);
                 if(ctx->recv_len >= ctx->data_len)
                 {
                     ctx->isotp_state = ISOTP_STATE_RX_DONE;
-                    printf("All frames recieved\n");
+                    // printf("All frames recieved\n");
                     REMOVE_HEAD(inst->recv_active_q);
                     ctx->next = NULL;
                     ADD_TO_TAIL(inst->recv_done_q,ctx);
@@ -200,7 +200,7 @@ static void send_tx(my_uart_t *inst)
                 frame.data = ctx->data;
                 ctx->isotp_state = ISOTP_STATE_WAIT_FOR_FC;
                 ctx->sent_len = ISOTP_MAX_FF_DATA_LENGTH;
-                printf("Sent FF\n");
+                // printf("Sent FF\n");
 
             }
             else
@@ -237,13 +237,13 @@ static void send_tx(my_uart_t *inst)
                 ctx->sent_len += ISOTP_MAX_FF_DATA_LENGTH;
                 send_isotp_frame(&frame);
                 
-                printf("Sent CF %d \n",i);
+                // printf("Sent CF %d \n",i);
                 i++;
                 if(ctx->sent_len >= ctx->data_len)
                 {
                     ctx->isotp_state = ISOTP_STATE_TX_DONE;
                     i=1;
-                    printf("Sent all CFs\n");
+                    // printf("Sent all CFs\n");
 
                 }
                 

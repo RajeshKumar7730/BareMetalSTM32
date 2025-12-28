@@ -185,7 +185,7 @@ def main():
             elif msg_id == 3:
 
 
-                with open("../build/bare-metal-stm32-with-metadata.bin", "rb") as file:
+                with open("build/bare-metal-stm32-with-metadata.bin", "rb") as file:
                     data = file.read()
                     fw_string=data.hex()
                     # print(len(fw_string))
@@ -207,7 +207,7 @@ def main():
                         chunks.append(int(form_int(temp_str),16))
                         if len(chunks) == 8:
                             #print(chunks)
-                            print('\t'.join([hex(i) for i in chunks]))
+                            # print('\t'.join([hex(i) for i in chunks]))
                             request = my_msgs_pb2.proto_msg()
                             request.upd_req.cmd = 1
                             request.upd_req.data.extend(chunks)

@@ -1,3 +1,4 @@
 build/
 protobuf/py_gen
 protobuf/c_gen
+fw_images/

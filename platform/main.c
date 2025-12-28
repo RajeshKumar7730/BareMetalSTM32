@@ -85,7 +85,7 @@ int main()
     led_init();
     sys_tick_init(1000,&update_periodic_tasks);
 
-    printf("1.1.0 Img booted\n");
+    printf("1.1.1 Img booted\n");
     
     queue_t uart_rx_packets_q;
     uint8_t uart_rx_packets_buf[MAX_MSGS_IN_UART_PKTS_QUEUE*MAX_UART_PKT_SIZE];
