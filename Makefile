@@ -28,8 +28,8 @@ gdb:
 	gdb-multiarch build/bare-metal-stm32.elf \
   			-ex "target remote host.docker.internal:3333" \
 			  -ex "load" \
-			  	-ex 'set $$pc = 0x20000320' \
-					-ex "break reset_handler"
+			  	-ex 'set $$pc = 0x200003dc' \
+					-ex "break main"
 
 debug:
 	openocd -f ./platform/openocd.cfg 

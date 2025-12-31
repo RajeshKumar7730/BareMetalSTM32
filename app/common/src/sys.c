@@ -4,7 +4,6 @@
 #include "sys.h"
 
 
-
 static uint32_t sys_ticks = 0;
 void sys_clock_init(){
     RCC->CR |= RCC_CR_HSION;
@@ -30,12 +29,24 @@ void sys_tick_init(uint32_t frequency, task_fn task){
 }
 
 
-void systick_handler(void)
-{
-    sys_ticks++;
-    upd_task();
+// void systick_handler(void)
+// {
+//     sys_ticks++;
+//     // upd_task();
+//     xPortSysTickHandler();
+// }
 
-}
+
+// void svcall_handler()
+// {
+//     vPortSVCHandler();
+// }
+
+
+// void pendsv_handler()
+// {
+//     xPortPendSVHandler();
+// }
 
 
 uint32_t sys_tick_get_current_ticks()

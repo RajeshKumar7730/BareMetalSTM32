@@ -13,6 +13,9 @@
 #include "crc.h"
 #include "queue.h"
 #include "protobuf_handler.h"
+#include "FreeRTOS.h"
+#include "projdefs.h"
+#include "task.h"
 #define MAX_MSGS_IN_UART_PKTS_QUEUE (8)
 
 typedef void(*task_fn)();
@@ -77,12 +80,44 @@ void execute_tasks()
 
 }
 
+void Task1(void *pvParameters);
+void Task2(void *pvParameters);
+void Task3(void *pvParameters);
+
+
+volatile fault_info_t info __attribute__((section(".no_init")));
+
+
+void print_fault_info(void)
+{
+    printf("Address of info is %x\n",&info);
+    if (info.magic != FAULT_MAGIC)
+    {
+        printf("No magic %x %x\n",&info.magic , info.magic);
+        return;
+    }
+
+    printf("\n---  FAULT DETECTED ---\n");
+    printf("PC   : 0x%08lX\n", info.pc);
+    printf("LR   : 0x%08lX\n", info.lr);
+    printf("PSR  : 0x%08lX\n", info.psr);
+    printf("IPSR : %lu\n",     info.ipsr);
+    printf("CFSR : 0x%08lX\n", info.cfsr);
+    printf("HFSR : 0x%08lX\n", info.hfsr);
+    printf("IRQn : 0x%08lX\n", info.irqn);
+    /* Clear after printing */
+    info.magic = 0;
+}
+
 int main()
 {
-    sys_clock_init();
+    // sys_clock_init();
     uart_init(UART5, 115200);
-
     led_init();
+    printf("RTOS Image booted\n");
+    print_fault_info();
+
+/*
     sys_tick_init(1000,&update_periodic_tasks);
 
     printf("1.1.1 Img booted\n");
@@ -106,15 +141,56 @@ int main()
     // printf("Bank 2 Computed  CRC is %x\n", crc);
 
 
+
+    
+*/
+
+
+    xTaskCreate(Task1,"Task 1",100,NULL,1,NULL);
+    xTaskCreate(Task2,"Task 2",100,NULL,1,NULL);
+    // xTaskCreate(Task3,"Task 3",100,NULL,3,NULL);
+
+    vTaskStartScheduler();
     while(1)
     {   
-        execute_tasks();
-        
+        // // // execute_tasks();
+        // ledOperate(LED_TOGGLE);
+        // printf("Hi Indu\n");
+        // delay();
         
     }
     
 }
 
+
+void Task1(void *pvParameters)
+{
+    while(1)
+    {
+        printf("\nHi ");
+        vTaskDelay(pdMS_TO_TICKS(3000));
+    }
+}
+
+
+void Task2(void *pvParameters)
+{
+    while(1)
+    {
+        printf("Raj ");
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
+
+void Task3(void *pvParameters)
+{
+    while(1)
+    {
+        printf("No time\n");
+        delay();
+    }
+}
 
 
 

@@ -47,6 +47,7 @@ void UART5_IRQHandler(void);
 void SPI1_IRQHandler(void) __attribute__((weak, alias("Default_Handler"))); 
 void TIM2_IRQ_Handler(void) __attribute__((weak, alias("Default_Handler"))); 
 extern void USART2_IRQHandler(void);
+extern volatile fault_info_t info;
 uint32_t isr_vector[ISR_VECTOR_SIZE_WORDS] __attribute__((section(".isr_vector"))) = {
     STACK_POINTER_INIT_ADDRESS,
     (uint32_t)&reset_handler,   		/* Reset Handler */
@@ -179,22 +180,46 @@ void reset_handler()
 
 void Default_Handler(void)
 {
-    uint32_t active = (SCB->ICSR & 0x1FF);   // Which vector is active?
 
-    // Print raw active IRQ number
-    printf("\nDef entered!\n");
-    printf("VECTACTIVE = %lu\n", active);
 
-    if (active >= 16) {
-        uint32_t irqn = active - 16;
-        printf("IRQn = %lu\n", irqn);
-    }
-	delay();
-	delay();
-	delay();
-	delay();
-    printf("Halting.\n");
+__asm volatile
+    (
+        "TST lr, #4        \n"  // Which stack was active?
+        "ITE EQ            \n"
+        "MRSEQ r0, MSP     \n"  // r0 = MSP
+        "MRSNE r0, PSP     \n"  // r0 = PSP
+        "B fault     		\n"  // branch to C with r0 set
+    );
 
+
+
+
+	
+}
+
+void fault(uint32_t *sp)
+{
+
+	uint32_t active = (SCB->ICSR & 0x1FF);   // Which vector is active?
+	
+	if (active >= 16) {
+		uint32_t irqn = active - 16;
+		// printf("IRQn = %lu\n", irqn);
+		info.irqn = irqn; 
+
+	}
+
+	info.pc   = sp[6];
+    info.cfsr = SCB->CFSR;
+    info.ipsr = __get_IPSR();
+    info.magic = 0xDEADBEEF;
+	
+	// delay();
+	// delay();
+	// delay();
+	// delay();
+	// printf("Halting.\n");
+	
 	while(1)
 	{
 		ledOperate(LED_TOGGLE);
@@ -202,8 +227,6 @@ void Default_Handler(void)
 	}
 
 }
-
-
 
 
 

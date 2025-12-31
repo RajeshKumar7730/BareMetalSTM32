@@ -39,8 +39,10 @@ add_subdirectory(app)
 add_subdirectory(drivers)
 add_subdirectory(uart_stack)
 add_subdirectory(protobuf)
+add_subdirectory(rtos_config)
+add_subdirectory(submodules)
 add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
-target_link_libraries(${EXECUTABLE_NAME} PRIVATE led common uart  uart_fsm flash uart_stack PROTOBUF uart_stack protobuf_handler) # freertos_kernel freertos_config -lc )#spi i2c timers adc
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE led common uart  uart_fsm flash uart_stack PROTOBUF uart_stack protobuf_handler freertos_kernel freertos_config) # freertos_kernel freertos_config -lc )#spi i2c timers adc
 # 
 target_link_options(${EXECUTABLE_NAME} PRIVATE "-Wl,-T${LINKER_SCRIPT}")
 target_link_options(${EXECUTABLE_NAME} PRIVATE "-Wl,-Map=${MAP_FILE}" -specs=nosys.specs -specs=nano.specs)

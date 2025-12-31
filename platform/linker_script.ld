@@ -30,4 +30,9 @@ SECTIONS {
         _ebss = .;
     } > SRAM
 
+
+    .no_init : {
+        *(.no_init)
+    } > SRAM
+
 }
