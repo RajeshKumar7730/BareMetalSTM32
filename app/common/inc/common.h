@@ -9,8 +9,8 @@
 
 
 
-
 #include "queue.h"
+#define WORD_SIZE_IN_BYTES (4)
 void delay();
 typedef void(*task_fn)();
 void mycopy(uint8_t *dest, uint8_t *src, int n);

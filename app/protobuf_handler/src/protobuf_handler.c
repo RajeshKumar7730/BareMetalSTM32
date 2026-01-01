@@ -10,6 +10,7 @@
 #include "uart.h"
 #include "led.h"
 #include "sys.h"
+#include "../../../versioning.h"
 
 void handle_fw_update(fw_upgrade *req);
 
@@ -50,35 +51,20 @@ void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
 
         /* Bank 1 */
         resp.payload.sw_info_resp.has_bank1 = true;
-        resp.payload.sw_info_resp.bank1.active  = 1;
-        resp.payload.sw_info_resp.bank1.major   = 0x11;
-        resp.payload.sw_info_resp.bank1.minor   = 0x21;
-        resp.payload.sw_info_resp.bank1.version = 0x101;
-        resp.payload.sw_info_resp.bank1.hash    = 0xAABB0001;
+        resp.payload.sw_info_resp.bank1.major   = FW_VER_MAJOR;
+        resp.payload.sw_info_resp.bank1.minor   = FW_VER_MINOR;
+        resp.payload.sw_info_resp.bank1.patch   = FW_VER_PATCH;
+        resp.payload.sw_info_resp.bank1.crc    = 0xDEADBEEF;
 
-        /* Bank 2 */
-        resp.payload.sw_info_resp.has_bank2 = true;
+        /* Bank 2 
+        resp.payload.sw_info_resp.has_bank2 = false;
         resp.payload.sw_info_resp.bank2.active  = 2;
         resp.payload.sw_info_resp.bank2.major   = 0x12;
         resp.payload.sw_info_resp.bank2.minor   = 0x22;
         resp.payload.sw_info_resp.bank2.version = 0x102;
         resp.payload.sw_info_resp.bank2.hash    = 0xAABB0002;
+        */
 
-        /* Bank 3 */
-        resp.payload.sw_info_resp.has_bank3 = true;
-        resp.payload.sw_info_resp.bank3.active  = 3;
-        resp.payload.sw_info_resp.bank3.major   = 0x13;
-        resp.payload.sw_info_resp.bank3.minor   = 0x23;
-        resp.payload.sw_info_resp.bank3.version = 0x103;
-        resp.payload.sw_info_resp.bank3.hash    = 0xAABB0003;
-
-        /* Bank 4 */
-        resp.payload.sw_info_resp.has_bank4 = true;
-        resp.payload.sw_info_resp.bank4.active  = 4;
-        resp.payload.sw_info_resp.bank4.major   = 0x14;
-        resp.payload.sw_info_resp.bank4.minor   = 0x24;
-        resp.payload.sw_info_resp.bank4.version = 0x104;
-        resp.payload.sw_info_resp.bank4.hash    = 0xAABB0004;
 
         uint8_t buffer[100];
         pb_ostream_t stream = pb_ostream_from_buffer(buffer,100);
@@ -159,11 +145,11 @@ void handle_fw_update(fw_upgrade *req)
             printf("Starting address %x\n", address);
         }
     #ifdef FW_UPDATE_DEBUG
-        printf("Chnk %d , Len = %d \n",chunk ,req->data_count*4);
+        printf("Chnk %d , Len = %d \n",chunk ,req->data_count*WORD_SIZE_IN_BYTES);
     #endif
         chunk++;
-        flash_write(address,(uint8_t *)req->data,req->data_count*4);
-        address += (4*req->data_count);
+        flash_write(address,(uint8_t *)req->data,req->data_count*WORD_SIZE_IN_BYTES);
+        address += (WORD_SIZE_IN_BYTES*req->data_count);
     }
 
     else if(req->cmd == UPD_CMD_CMD_FW_UPGRADE_DONE)
