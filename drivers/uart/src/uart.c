@@ -17,11 +17,9 @@ rb_t tx_uart_rb_usb;
 uint8_t rx_uart_buffer_usb[BUFFER_SIZE];
 rb_t rx_uart_rb_usb;
 
-extern char last_msg_recieved;
 
 
-
-void uart_init(USART_TypeDef *uart, uint32_t baudrate)
+void uart_init(USART_TypeDef *uart, uint32_t baudrate , bool enable_irq)
 {
     /*
         UART 5 External UART
@@ -131,21 +129,24 @@ void uart_init(USART_TypeDef *uart, uint32_t baudrate)
     uart->CR1 |= USART_CR1_RE;
     uart->CR1 |= USART_CR1_UE;
     // uart->CR1 |= USART_CR1_TXEIE;
-    uart->CR1 |= USART_CR1_RXNEIE;
+    if(enable_irq)
+    {
+        uart->CR1 |= USART_CR1_RXNEIE;
+    }
 
 
-    if(uart == UART5)
+    if(uart == UART5 && enable_irq)
     {
         NVIC_EnableIRQ(UART5_IRQn);
         NVIC_SetPriority(UART5_IRQn, 2);  // Lower priority (higher number)
     }
-    else if(uart == USART2)
+    else if(uart == USART2 && enable_irq)
     {
         NVIC_EnableIRQ(USART2_IRQn);
         NVIC_SetPriority(USART2_IRQn, 6);  // Lower priority (higher number)
     }
 
-    else if(uart == UART4)
+    else if(uart == UART4 && enable_irq)
     {
         NVIC_EnableIRQ(UART4_IRQn);
         NVIC_SetPriority(UART4_IRQn, 2);  // Lower priority (higher number)
@@ -154,6 +155,10 @@ void uart_init(USART_TypeDef *uart, uint32_t baudrate)
 
 }
 
+void uart_enable_dma(USART_TypeDef *uart)
+{
+    uart->CR3 |= USART_CR3_DMAT;
+}
 
 void UART5_IRQHandler(void)
 {
