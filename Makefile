@@ -1,18 +1,20 @@
 
 all:bootloader app	
-	@mkdir -p fw_images/app
-	@mkdir -p fw_images/bootloader
-	@cp build/bare-metal-stm32* fw_images/app
-	@cp ___Bootloader/build/bootloader* fw_images/bootloader
+
 
 app:gen_protobuf_headers
 	@cmake -B build -S .
 	@cmake --build build
 	python3 scripts/pad_metadata.py
+	@mkdir -p fw_images/app
+	@cp build/bare-metal-stm32* fw_images/app
+	
 	
 bootloader:
 	@cmake -B ___Bootloader/build -S ___Bootloader/.
 	cmake --build ___Bootloader/build
+	@mkdir -p fw_images/bootloader
+	@cp ___Bootloader/build/bootloader* fw_images/bootloader
 
 gen_protobuf_headers:
 	@mkdir -p protobuf/c_gen
@@ -28,8 +30,8 @@ gdb:
 	gdb-multiarch build/bare-metal-stm32.elf \
   			-ex "target remote host.docker.internal:3333" \
 			  -ex "load" \
-			  	-ex 'set $$pc = 0x20000320' \
-					-ex "break reset_handler"
+			  	-ex 'set $$pc = 0x20000340' \
+					-ex "break main"
 
 debug:
 	openocd -f ./platform/openocd.cfg 

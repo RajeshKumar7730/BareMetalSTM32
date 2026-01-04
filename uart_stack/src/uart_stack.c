@@ -10,7 +10,7 @@ bool uart_stack_init(uart_stack_config_t *config, queue_t *queue)
 {
     if(config)
     {
-        uart_init(config->uart,config->baudrate);
+        uart_init(config->uart,config->baudrate,true);
         uart_inst.port = config->uart;
         uart_inst.queue =queue;
         uart_inst.recv_active_q = NULL;

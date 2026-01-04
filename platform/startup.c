@@ -39,6 +39,7 @@ void dma1_channel4_handler(void) __attribute__((weak, alias("Default_Handler")))
 void dma1_channel5_handler(void) __attribute__((weak, alias("Default_Handler")));
 void dma1_channel6_handler(void) __attribute__((weak, alias("Default_Handler")));
 void dma1_channel7_handler(void) __attribute__((weak, alias("Default_Handler")));
+void dma2_channel3_handler(void) __attribute__((weak, alias("Default_Handler")));
 void adc1_2_handler(void) __attribute__((weak, alias("Default_Handler")));
 void UART4_IRQHandler(void) __attribute__((weak, alias("Default_Handler"))); // Added UART4 handler
 void UART5_IRQHandler(void);
@@ -76,7 +77,7 @@ uint32_t isr_vector[ISR_VECTOR_SIZE_WORDS] __attribute__((section(".isr_vector")
 	(uint32_t)&Default_Handler, 	/* 8 EXTI2 and TSC */
 	(uint32_t)&Default_Handler, 	/* 9 EXTI3 */
 	(uint32_t)&Default_Handler, 	/* 10 EXTI4 */
-	(uint32_t)&Default_Handler, 	/* 11 DMA_CH1 */
+	(uint32_t)&dma1_channel1_handler, 	/* 11 DMA_CH1 */
 	(uint32_t)&Default_Handler, 	/* 12 DMA_CH2 */
 	(uint32_t)&Default_Handler, 	/* 13 DMA_CH3 */
 	(uint32_t)&Default_Handler, 	/* 14 DMA_CH4 */
@@ -123,7 +124,7 @@ uint32_t isr_vector[ISR_VECTOR_SIZE_WORDS] __attribute__((section(".isr_vector")
 	(uint32_t)&Default_Handler, 	/* 55 TIM7 */
 	(uint32_t)&Default_Handler, 	/* 56 DMA2_CH1 */
 	(uint32_t)&Default_Handler, 	/* 57 DMA2_CH2 */
-	(uint32_t)&Default_Handler, 	/* 58 DMA2_CH3 */
+	(uint32_t)&dma2_channel3_handler, 	/* 58 DMA2_CH3 */
 	(uint32_t)&Default_Handler, 	/* 59 DMA2_CH4 */
 	(uint32_t)&Default_Handler, 	/* 60 DMA2_CH5 */
 	(uint32_t)&Default_Handler, 	/* 61 DFSDM1_FLT0 */
@@ -180,6 +181,7 @@ void reset_handler()
 void Default_Handler(void)
 {
     uint32_t active = (SCB->ICSR & 0x1FF);   // Which vector is active?
+    __BKPT(0);          // debugger stops here
 
     // Print raw active IRQ number
     printf("\nDef entered!\n");
@@ -189,18 +191,9 @@ void Default_Handler(void)
         uint32_t irqn = active - 16;
         printf("IRQn = %lu\n", irqn);
     }
-	delay();
-	delay();
-	delay();
-	delay();
-    printf("Halting.\n");
 
-	while(1)
-	{
-		ledOperate(LED_TOGGLE);
-		delay();
-	}
 
+    while(1);
 }
 
 
