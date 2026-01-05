@@ -27,11 +27,4 @@
 void flash_erase(uint32_t address);
 void flash_write(uint32_t dest_addr,uint8_t *data,uint32_t len);
 uint32_t get_oldest_bank_start_address();
-typedef struct {
-    uint32_t magic_number;
-    uint32_t version;
-    uint32_t size;
-    uint32_t crc;
-    uint32_t build_time;  // epoch
-} fw_meta_t;
 #endif /* FLASH_H */

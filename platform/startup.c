@@ -7,6 +7,7 @@
 #include "common.h"
 #include "led.h"
 #include "printf.h"
+uint32_t irqn __attribute__((section(".noinit"))) ; 
 void reset_handler(void);
 void Default_Handler(void);
 // Cortex-M system exceptions
@@ -181,7 +182,7 @@ void reset_handler()
 void Default_Handler(void)
 {
     uint32_t active = (SCB->ICSR & 0x1FF);   // Which vector is active?
-    __BKPT(0);          // debugger stops here
+    // __BKPT(0);          // debugger stops here
 
     // Print raw active IRQ number
     printf("\nDef entered!\n");
@@ -193,7 +194,12 @@ void Default_Handler(void)
     }
 
 
-    while(1);
+	irqn=active;
+    while(1)
+	{
+		ledOperate(LED_TOGGLE);
+		delay();
+	}
 }
 
 

@@ -18,15 +18,13 @@ message bankinfo {
     uint32 active = 1;
     uint32 major = 2;
     uint32 minor = 3;
-    uint32 version = 4;
-    uint32 hash = 5;
+    uint32 patch = 4;
+    uint32 crc   = 5;
 }
 
 message sw_info{
     bankinfo bank1  = 1;
-    bankinfo bank2  = 2;
-    bankinfo bank3  = 3;
-    bankinfo bank4  = 4;  
+    bankinfo bank2  = 2;  
 }
 enum UPD_CMD{
   CMD_FLASH_ERASE = 0;

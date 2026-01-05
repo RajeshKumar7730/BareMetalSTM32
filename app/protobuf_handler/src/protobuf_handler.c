@@ -49,36 +49,22 @@ void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
         resp.which_payload = proto_msg_sw_info_resp_tag;
 
         /* Bank 1 */
+        uint32_t version = get_fw_version();
+        printf("Version is %d\n",version);
         resp.payload.sw_info_resp.has_bank1 = true;
         resp.payload.sw_info_resp.bank1.active  = 1;
-        resp.payload.sw_info_resp.bank1.major   = 0x11;
-        resp.payload.sw_info_resp.bank1.minor   = 0x21;
-        resp.payload.sw_info_resp.bank1.version = 0x101;
-        resp.payload.sw_info_resp.bank1.hash    = 0xAABB0001;
+        resp.payload.sw_info_resp.bank1.major   = GET_MAJOR_VERSION(version);
+        resp.payload.sw_info_resp.bank1.minor   = GET_MINOR_VERSION(version);
+        resp.payload.sw_info_resp.bank1.patch   = GET_PATCH_VERSION(version);
+        resp.payload.sw_info_resp.bank1.crc    = get_fw_crc();
 
         /* Bank 2 */
-        resp.payload.sw_info_resp.has_bank2 = true;
-        resp.payload.sw_info_resp.bank2.active  = 2;
-        resp.payload.sw_info_resp.bank2.major   = 0x12;
-        resp.payload.sw_info_resp.bank2.minor   = 0x22;
-        resp.payload.sw_info_resp.bank2.version = 0x102;
-        resp.payload.sw_info_resp.bank2.hash    = 0xAABB0002;
-
-        /* Bank 3 */
-        resp.payload.sw_info_resp.has_bank3 = true;
-        resp.payload.sw_info_resp.bank3.active  = 3;
-        resp.payload.sw_info_resp.bank3.major   = 0x13;
-        resp.payload.sw_info_resp.bank3.minor   = 0x23;
-        resp.payload.sw_info_resp.bank3.version = 0x103;
-        resp.payload.sw_info_resp.bank3.hash    = 0xAABB0003;
-
-        /* Bank 4 */
-        resp.payload.sw_info_resp.has_bank4 = true;
-        resp.payload.sw_info_resp.bank4.active  = 4;
-        resp.payload.sw_info_resp.bank4.major   = 0x14;
-        resp.payload.sw_info_resp.bank4.minor   = 0x24;
-        resp.payload.sw_info_resp.bank4.version = 0x104;
-        resp.payload.sw_info_resp.bank4.hash    = 0xAABB0004;
+        // resp.payload.sw_info_resp.has_bank2 = false;
+        // resp.payload.sw_info_resp.bank2.active  = 2;
+        // resp.payload.sw_info_resp.bank2.major   = 0x12;
+        // resp.payload.sw_info_resp.bank2.minor   = 0x22;
+        // resp.payload.sw_info_resp.bank2.patch = 0x102;
+        // resp.payload.sw_info_resp.bank2.crc    = 0xAABB0002;
 
         uint8_t buffer[100];
         pb_ostream_t stream = pb_ostream_from_buffer(buffer,100);
@@ -183,6 +169,7 @@ void handle_fw_update(fw_upgrade *req)
 
 void process_rx_msg()
 {
+    printf("Alive\n");
     uint8_t msg_buffer[200];
     uint8_t msg_len;
     if(uart_stack_get_msg(msg_buffer,&msg_len) == 0)

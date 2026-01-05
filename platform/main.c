@@ -15,7 +15,7 @@
 #include "protobuf_handler.h"
 #include "dma.h"
 #define MAX_MSGS_IN_UART_PKTS_QUEUE (8)
-
+extern uint8_t irqn;
 typedef void(*task_fn)();
 typedef struct{
     char *name;
@@ -27,7 +27,7 @@ typedef struct{
 
 
 task_t periodic_tasks[]={
-    {.name= "Blinky Task" ,          .execute_fn = led_task , .ready_to_run = false ,.timer = 0 , .periodicity = 1000 },
+    // {.name= "Blinky Task" ,          .execute_fn = led_task , .ready_to_run = false ,.timer = 0 , .periodicity = 1000 },
     {.name= "Msg processing Task" ,  .execute_fn = process_rx_msg ,    .ready_to_run = false ,.timer = 0 , .periodicity = 5 },
 
 };
@@ -86,8 +86,10 @@ int main()
     led_init();
     sys_tick_init(1000,&update_periodic_tasks);
 
-    printf("1.1.1 Img booted\n");
-    
+    // printf("1.1.1 Img booted\n");
+    printf("IRQn = %d\n",irqn);
+    delay();
+    delay();
     
     queue_t uart_rx_packets_q;
     uint8_t uart_rx_packets_buf[MAX_MSGS_IN_UART_PKTS_QUEUE*MAX_UART_PKT_SIZE];

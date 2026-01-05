@@ -60,12 +60,12 @@ static void copy_image_to_SRAM(uint8_t image_id, uint32_t load_address)
     fw_meta_t *image;
     if(image_id == IMAGE_ID_1){
         image = (fw_meta_t *)((uint32_t*)IMAGE1_START_ADDRESS);
-        src_ptr = (uint32_t *) (IMAGE1_START_ADDRESS + METADATA_SIZE);
+        src_ptr = (uint32_t *) (IMAGE1_START_ADDRESS); // Copy along with metadata so that its easier to find which is active bank
 
     }
     else if(image_id == IMAGE_ID_2){
         image = (fw_meta_t *)((uint32_t*)IMAGE2_START_ADDRESS);
-        src_ptr =(uint32_t *) (IMAGE2_START_ADDRESS + METADATA_SIZE);
+        src_ptr =(uint32_t *) (IMAGE2_START_ADDRESS );
     }
     // printf("Seltd image  Mgc Number : %x, Version : %d Bld Time : %d",image->magic_number ,
     //                                     image->version , image->build_time);
@@ -82,7 +82,7 @@ static void copy_image_to_SRAM(uint8_t image_id, uint32_t load_address)
         words_to_copy--;
     }
     
-    jump_to_app(load_address);
+    jump_to_app(load_address+METADATA_SIZE);
 
 }
 

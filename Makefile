@@ -30,7 +30,7 @@ gdb:
 	gdb-multiarch build/bare-metal-stm32.elf \
   			-ex "target remote host.docker.internal:3333" \
 			  -ex "load" \
-			  	-ex 'set $$pc = 0x20000340' \
+			  	-ex 'set $$pc = 0x200003a0' \
 					-ex "break main"
 
 debug:
