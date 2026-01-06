@@ -43,7 +43,7 @@ void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
     }
     else if(msg.which_payload == proto_msg_sw_info_req_tag)
     {
-        // printf("Got swinfo req");
+        printf("Got swinfo req");
 
         proto_msg resp = proto_msg_init_zero;
         resp.which_payload = proto_msg_sw_info_resp_tag;
@@ -169,7 +169,6 @@ void handle_fw_update(fw_upgrade *req)
 
 void process_rx_msg()
 {
-    printf("Alive\n");
     uint8_t msg_buffer[200];
     uint8_t msg_len;
     if(uart_stack_get_msg(msg_buffer,&msg_len) == 0)

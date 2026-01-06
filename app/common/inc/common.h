@@ -9,9 +9,9 @@
 #include "queue.h"
 #define SRAM_START_ADDRESSS     (0x20000000)
 
-#define MAJOR_VERSION_Pos       (0x16)
-#define MINOR_VERSION_Pos       (0x8)
-#define PATCH_VERSION_Pos       (0x0)
+#define MAJOR_VERSION_Pos       (16)
+#define MINOR_VERSION_Pos       (8)
+#define PATCH_VERSION_Pos       (0)
 #define MAJOR_VERSION_MASK      (0xFF << MAJOR_VERSION_Pos)
 #define MINOR_VERSION_MASK      (0xFF << MINOR_VERSION_Pos)
 #define PATCH_VERSION_MASK      (0xFF << PATCH_VERSION_Pos)

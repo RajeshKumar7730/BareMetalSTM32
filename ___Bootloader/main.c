@@ -70,7 +70,7 @@ static void copy_image_to_SRAM(uint8_t image_id, uint32_t load_address)
     // printf("Seltd image  Mgc Number : %x, Version : %d Bld Time : %d",image->magic_number ,
     //                                     image->version , image->build_time);
 
-    uint32_t words_to_copy = image->size/4;
+    uint32_t words_to_copy = (METADATA_SIZE+ (image->size/4));
     uint32_t *dst_ptr = (uint32_t *)load_address;
 
 

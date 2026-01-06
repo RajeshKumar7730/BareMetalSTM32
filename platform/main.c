@@ -88,6 +88,7 @@ int main()
 
     // printf("1.1.1 Img booted\n");
     printf("IRQn = %d\n",irqn);
+    printf("Img booted\n");
     delay();
     delay();
     
