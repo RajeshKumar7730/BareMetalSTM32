@@ -10,8 +10,7 @@
 #include "uart.h"
 #include "led.h"
 #include "sys.h"
-
-void handle_fw_update(fw_upgrade *req);
+#include "fw_update.h"
 
 void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
 {
@@ -43,42 +42,28 @@ void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
     }
     else if(msg.which_payload == proto_msg_sw_info_req_tag)
     {
-        // printf("Got swinfo req");
+        printf("Got swinfo req");
 
         proto_msg resp = proto_msg_init_zero;
         resp.which_payload = proto_msg_sw_info_resp_tag;
 
         /* Bank 1 */
+        uint32_t version = get_fw_version();
+        printf("Version is %d\n",version);
         resp.payload.sw_info_resp.has_bank1 = true;
         resp.payload.sw_info_resp.bank1.active  = 1;
-        resp.payload.sw_info_resp.bank1.major   = 0x11;
-        resp.payload.sw_info_resp.bank1.minor   = 0x21;
-        resp.payload.sw_info_resp.bank1.version = 0x101;
-        resp.payload.sw_info_resp.bank1.hash    = 0xAABB0001;
+        resp.payload.sw_info_resp.bank1.major   = GET_MAJOR_VERSION(version);
+        resp.payload.sw_info_resp.bank1.minor   = GET_MINOR_VERSION(version);
+        resp.payload.sw_info_resp.bank1.patch   = GET_PATCH_VERSION(version);
+        resp.payload.sw_info_resp.bank1.crc    = get_fw_crc();
 
         /* Bank 2 */
-        resp.payload.sw_info_resp.has_bank2 = true;
-        resp.payload.sw_info_resp.bank2.active  = 2;
-        resp.payload.sw_info_resp.bank2.major   = 0x12;
-        resp.payload.sw_info_resp.bank2.minor   = 0x22;
-        resp.payload.sw_info_resp.bank2.version = 0x102;
-        resp.payload.sw_info_resp.bank2.hash    = 0xAABB0002;
-
-        /* Bank 3 */
-        resp.payload.sw_info_resp.has_bank3 = true;
-        resp.payload.sw_info_resp.bank3.active  = 3;
-        resp.payload.sw_info_resp.bank3.major   = 0x13;
-        resp.payload.sw_info_resp.bank3.minor   = 0x23;
-        resp.payload.sw_info_resp.bank3.version = 0x103;
-        resp.payload.sw_info_resp.bank3.hash    = 0xAABB0003;
-
-        /* Bank 4 */
-        resp.payload.sw_info_resp.has_bank4 = true;
-        resp.payload.sw_info_resp.bank4.active  = 4;
-        resp.payload.sw_info_resp.bank4.major   = 0x14;
-        resp.payload.sw_info_resp.bank4.minor   = 0x24;
-        resp.payload.sw_info_resp.bank4.version = 0x104;
-        resp.payload.sw_info_resp.bank4.hash    = 0xAABB0004;
+        // resp.payload.sw_info_resp.has_bank2 = false;
+        // resp.payload.sw_info_resp.bank2.active  = 2;
+        // resp.payload.sw_info_resp.bank2.major   = 0x12;
+        // resp.payload.sw_info_resp.bank2.minor   = 0x22;
+        // resp.payload.sw_info_resp.bank2.patch = 0x102;
+        // resp.payload.sw_info_resp.bank2.crc    = 0xAABB0002;
 
         uint8_t buffer[100];
         pb_ostream_t stream = pb_ostream_from_buffer(buffer,100);
@@ -100,7 +85,8 @@ void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
 
     else if(msg.which_payload == proto_msg_upd_req_tag)
     {
-        handle_fw_update(&msg.payload.upd_req);
+        handle_fw_update_msg(&msg.payload.upd_req);  
+         // handle_fw_update(&msg.payload.upd_req);
         // uart_print_msg(msg.payload.upd_req.data , msg.payload.upd_req.data_count*4);
     }
 
@@ -119,19 +105,8 @@ void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
 
 
 
-static void erase_region_for_fw_upgrade()
-{
-    uint32_t address = get_oldest_bank_start_address();
-    for(int i=0;i<20;i++)
-    {
-        uint32_t addr = address+i*PAGE_SIZE;
-        //printf("Current addr is %x\n",addr);
-        flash_erase(addr);
-    }
-    // printf("Erase done\n");
 
-}
-
+/*
 void handle_fw_update(fw_upgrade *req)
 {
     // fw_up_pkt_t *packet = (fw_up_pkt_t *)request->data;
@@ -178,7 +153,7 @@ void handle_fw_update(fw_upgrade *req)
     }
 }
 
-
+*/
 
 
 void process_rx_msg()

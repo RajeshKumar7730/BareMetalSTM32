@@ -2,10 +2,9 @@ import struct
 import zlib
 import time
 import os
-
+import json
 FW_BIN = "build/bare-metal-stm32.bin"
 FW_OUT = "build/bare-metal-stm32-with-metadata.bin"
-FW_VERSION = 5
 MAGIC = 0xDEADBEEF
 
 CRC8_POLYNOMIAL = 0x31
@@ -28,6 +27,18 @@ def crc8_file(path):
         data = f.read()
     return crc8(data)
 
+
+FW_VERSION = 0
+MAJOR = 0
+MINOR = 0
+PATCH = 0
+with open('version.json') as f:
+    d = json.load(f)
+    MAJOR = d["major"]
+    MINOR = d["minor"]
+    PATCH = d["patch"]
+
+FW_VERSION = (MAJOR << 16) | (MINOR << 8) | (PATCH)
 # Read firmware
 with open(FW_BIN, "rb") as f:
     fw_data = f.read()
@@ -55,3 +66,5 @@ print(f"Metadata size (with padding): {len(meta_data)}, Firmware size: {fw_size}
 # print(f"Firmware will start at 128-byte aligned address after metadata")
 print(f"Build epoch time: {hex(build_time)}")
 print(f"FW CRC: {hex(fw_crc)}")
+print(f"FW Version: {MAJOR,MINOR,PATCH}")
+print(f"Packed Version: {hex(FW_VERSION)}")

@@ -1,13 +1,9 @@
 MEMORY {
     FLASH     : ORIGIN = 0x08008000, LENGTH = 480K
-    SRAM      : ORIGIN = 0x20000000, LENGTH = 96K
+    SRAM      : ORIGIN = 0x20000080, LENGTH = 96K
 }
 
 SECTIONS {
-    .metadata : {
-        *(.metadata)
-    } > FLASH
-
     .text : {
         _stext = .;
         *(.isr_vector)
@@ -30,4 +26,7 @@ SECTIONS {
         _ebss = .;
     } > SRAM
 
+    .noinit : {
+        *(.noinit*)
+    } > SRAM
 }

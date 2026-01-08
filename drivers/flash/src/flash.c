@@ -65,14 +65,14 @@ uint32_t get_oldest_bank_start_address()
 
     
 }
-void flash_erase(uint32_t address){
+bool flash_erase(uint32_t address){
     
     address = address - address % PAGE_SIZE;
 
     if(check_bounds(address) != 0)
     {
         printf("Invalid flash erase arg\n");
-        return;
+        return false;
     }
     
     bool is_bank2 = false;
@@ -117,6 +117,7 @@ void flash_erase(uint32_t address){
 #ifdef FLASH_DEBUG
     printf("Flash erase done\n");
 #endif
+    return true;
 }
 void flash_write(uint32_t dest_addr,uint8_t *data,uint32_t len){
 
