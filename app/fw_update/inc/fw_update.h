@@ -17,6 +17,7 @@ typedef enum{
 typedef struct{
     uint8_t state;
     uint16_t num_chunks;
+    uint32_t start_address;
     uint32_t current_address;
 }fw_upd_status_t;
 

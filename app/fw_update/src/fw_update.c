@@ -6,6 +6,7 @@
 #include "flash.h"
 #include "uart_stack.h"
 #include "pb_encode.h"
+#include "crc.h"
 static fw_upd_status_t upd_mgr;
 
 
@@ -51,7 +52,8 @@ void fw_update_init()
 {   
     upd_mgr.state = FW_UPD_STATE_IDLE;
     upd_mgr.num_chunks = 0;
-    upd_mgr.current_address = 0xFFFFFFFF;
+    upd_mgr.start_address = INVALID_ADDRESS;
+    upd_mgr.current_address = INVALID_ADDRESS;
 }  
 
 void handle_fw_update_msg(fw_upgrade_req *req)
@@ -69,6 +71,7 @@ void handle_fw_update_msg(fw_upgrade_req *req)
                 {
                     status = STATUS_FLASH_ERASE_SUCCESS;
                     upd_mgr.state = FW_UPD_STATE_GET_CHUNKS;
+                    upd_mgr.start_address = start_address;
                     upd_mgr.current_address = start_address;
                 }
                 else{
@@ -103,7 +106,14 @@ void handle_fw_update_msg(fw_upgrade_req *req)
             else if(req->cmd == UPD_CMD_FW_UPGRADE_DONE)
             {
                 printf("Full image recieved\n");
-                uint8_t crc_status =STATUS_FW_CRC_SUCCESS;
+                uint8_t crc_status =STATUS_FW_CRC_FAILURE;
+                fw_meta_t *metadata = (fw_meta_t *)upd_mgr.start_address;
+                uint32_t actual_crc = metadata->crc;
+                uint32_t computed_crc = calculate_crc8((uint8_t *)(upd_mgr.start_address+METADATA_SIZE),metadata->size);
+                if(actual_crc == computed_crc)
+                {
+                    crc_status = STATUS_FW_CRC_SUCCESS;
+                }
                 send_status(UPD_CMD_FW_UPGRADE_DONE,crc_status);
                 upd_mgr.state = FW_UPD_STATE_WAIT_FOR_REBOOT;
             }

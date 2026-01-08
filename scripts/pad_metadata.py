@@ -67,4 +67,4 @@ print(f"Metadata size (with padding): {len(meta_data)}, Firmware size: {fw_size}
 print(f"Build epoch time: {hex(build_time)}")
 print(f"FW CRC: {hex(fw_crc)}")
 print(f"FW Version: {MAJOR,MINOR,PATCH}")
-print(f"Packed Version: {FW_VERSION}")
+print(f"Packed Version: {hex(FW_VERSION)}")

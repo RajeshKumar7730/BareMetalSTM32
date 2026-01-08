@@ -32,6 +32,8 @@ def file_to_uint32_array(path: str):
 STATE_IDLE = 0
 SEND_ERASE_COMMAND = 1
 SEND_DATA_CHUNK = 2
+NOTIFY_FW_UPD_COMPLETE = 3  
+SEND_RESET_COMMAND = 4
 WORDS_PER_CHUNK = 8   # =8 * 4 bytes = 32 bytes
 
 def start_fw_upgrade(ser):
@@ -67,7 +69,7 @@ def start_fw_upgrade(ser):
                     chunk = fw[i:i + WORDS_PER_CHUNK]
 
                     # Pad last chunk if odd number of words
-                    if len(chunk) < WORDS_PER_CHUNK:
+                    if len(chunk) % 2 != 0:
                         chunk.append(0)
                     # print([f"0x{v:08X}" for v in chunk])
                     send_data_chunk(ser,chunk)
@@ -77,26 +79,24 @@ def start_fw_upgrade(ser):
                     if response is None:
                         break
                     else:
-                        continue
-                
-                print("Notify Update Done.")
+                        curr_state = NOTIFY_FW_UPD_COMPLETE
+            case 3:
                 notify_fw_upd_complete(ser)
+                print("Notify Update Done.")
                 response = recv_isotp_message(ser,1)
                 print_response(response)
                 if response is None:
                     break;
                 else:
-                    # Check crc from response 
-                    pass                  
+                    # Check crc from response
+                    # Send reboot command 
+                    curr_state = SEND_RESET_COMMAND
+                    pass   
+
+            case 4:               
                 print("Send reset ")
                 send_reset_command(ser)
                 response = recv_isotp_message(ser,1)
-                print_response(response)
-                if response is None:
-                    break;
-                else:
-                    pass
-
                 print("FW Update successfully done")
                 break           
                     
