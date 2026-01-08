@@ -20,7 +20,7 @@ gen_protobuf_headers:
 	@mkdir -p protobuf/c_gen
 	@mkdir -p protobuf/py_gen
 	@protoc -I protobuf -I protobuf/msgs/   --plugin="python3 nanopb_generator.py"  --nanopb_out=protobuf/c_gen/  --proto_path=protobuf/nanopb/generator/proto/ protobuf/msgs/my_msgs.proto 	
-	@protoc -I protobuf --python_out=protobuf/py_gen  --proto_path=protobuf/nanopb/generator/proto/ protobuf/msgs/my_msgs.proto
+	@protoc -I protobuf --python_out=protobuf/py_gen --pyi_out=protobuf/py_gen/  --proto_path=protobuf/nanopb/generator/proto/ protobuf/msgs/my_msgs.proto
 
 clean:
 	@rm -rf build/ protobuf/c_gen protobuf/py_gen ___Bootloader/build fw_images

@@ -96,7 +96,7 @@ int main()
     uint8_t uart_rx_packets_buf[MAX_MSGS_IN_UART_PKTS_QUEUE*MAX_UART_PKT_SIZE];
     queue_init(&uart_rx_packets_q, uart_rx_packets_buf , 4 , MAX_UART_PKT_SIZE);
     fsm_init(&uart_rx_packets_q);
-
+    
     uart_stack_config_t config = {.uart = DEFAULT_DEBUG_TOOL_UART , .baudrate =115200};
     uart_stack_init(&config,&uart_rx_packets_q);
 
@@ -111,6 +111,8 @@ int main()
     // printf("Bank 2 Computed  CRC is %x\n", crc);
 
 
+    uint32_t version = get_fw_version();
+    printf("Major %d , Minor %d , Patch %d \n",GET_MAJOR_VERSION(version),GET_MINOR_VERSION(version),GET_PATCH_VERSION(version));
     while(1)
     {   
         execute_tasks();

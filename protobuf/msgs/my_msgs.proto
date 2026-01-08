@@ -27,14 +27,34 @@ message sw_info{
     bankinfo bank2  = 2;  
 }
 enum UPD_CMD{
-  CMD_FLASH_ERASE = 0;
-  CMD_FLASH_WRITE = 1;
-  CMD_ABORT_UPGRADE = 2;
-  CMD_FW_UPGRADE_DONE = 3;
+  FLASH_ERASE = 0;
+  DATA_CHUNK = 1;
+  ABORT_UPGRADE = 2;
+  FW_UPGRADE_DONE = 3;
+  RESET_DEVICE = 4;
 }
-message fw_upgrade{
+
+
+enum STATUS{
+  NO_ERROR = 0;
+  FLASH_ERASE_SUCCESS = 1;
+  FLASH_ERASE_FAILED = 2;
+  ACK_FOR_CHUNKS = 3;
+  FW_CRC_FAILURE = 4;
+  FW_CRC_SUCCESS = 5;
+  UNEXPECTED_COMMAND =6;
+}
+
+message fw_upgrade_req{
   UPD_CMD cmd = 1;
-  repeated uint32 data = 2 [(nanopb).max_count = 8];;
+  uint32   fw_size = 2; // Sent when cmd is to FLASH_ERASE
+  repeated uint32 data = 3 [(nanopb).max_count = 8];
+}
+
+
+message fw_upgrade_resp{
+  UPD_CMD last_cmd = 1;
+  STATUS status = 2;
 }
 
 enum LED_STATE{
@@ -54,8 +74,8 @@ message proto_msg {
     AddResponse add_resp = 3;
     Empty sw_info_req = 4;
     sw_info sw_info_resp = 5;
-    fw_upgrade upd_req = 6;
-
+    fw_upgrade_req upd_req = 6;
+    fw_upgrade_resp upd_resp = 7;
     led_ctrl_req led_req = 8; 
   }
 }

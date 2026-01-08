@@ -10,8 +10,7 @@
 #include "uart.h"
 #include "led.h"
 #include "sys.h"
-
-void handle_fw_update(fw_upgrade *req);
+#include "fw_update.h"
 
 void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
 {
@@ -86,7 +85,8 @@ void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
 
     else if(msg.which_payload == proto_msg_upd_req_tag)
     {
-        handle_fw_update(&msg.payload.upd_req);
+        handle_fw_update_msg(&msg.payload.upd_req);  
+         // handle_fw_update(&msg.payload.upd_req);
         // uart_print_msg(msg.payload.upd_req.data , msg.payload.upd_req.data_count*4);
     }
 
@@ -105,19 +105,8 @@ void process_protobuf_message(uint8_t *rx_buf , uint8_t len)
 
 
 
-static void erase_region_for_fw_upgrade()
-{
-    uint32_t address = get_oldest_bank_start_address();
-    for(int i=0;i<20;i++)
-    {
-        uint32_t addr = address+i*PAGE_SIZE;
-        //printf("Current addr is %x\n",addr);
-        flash_erase(addr);
-    }
-    // printf("Erase done\n");
 
-}
-
+/*
 void handle_fw_update(fw_upgrade *req)
 {
     // fw_up_pkt_t *packet = (fw_up_pkt_t *)request->data;
@@ -164,7 +153,7 @@ void handle_fw_update(fw_upgrade *req)
     }
 }
 
-
+*/
 
 
 void process_rx_msg()

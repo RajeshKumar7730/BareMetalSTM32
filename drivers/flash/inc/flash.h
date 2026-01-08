@@ -24,7 +24,7 @@
 #define IMAGE_ID_1              (1)
 #define IMAGE_ID_2              (2)
 
-void flash_erase(uint32_t address);
+bool flash_erase(uint32_t address);
 void flash_write(uint32_t dest_addr,uint8_t *data,uint32_t len);
 uint32_t get_oldest_bank_start_address();
 #endif /* FLASH_H */

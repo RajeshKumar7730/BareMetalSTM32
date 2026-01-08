@@ -117,13 +117,14 @@ void flash_erase(uint32_t address){
 #ifdef FLASH_DEBUG
     printf("Flash erase done\n");
 #endif
+    return;
 }
 void flash_write(uint32_t dest_addr,uint8_t *data,uint32_t len){
 
 
     if(check_bounds(dest_addr) != 0 || (len % 8 != 0) )
     {
-        printf("Flash write failed");
+        printf("Flash write failed -> Address %d Len %d",dest_addr,len);
         return;
     }
     unlock_flash();
